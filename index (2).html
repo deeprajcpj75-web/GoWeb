@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GoWeb — Build with Deepraj!</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f3ee;
+    --accent: #d4f000;
+    --accent-dark: #a8be00;
+    --mid: #1a1a1a;
+    --muted: #666;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+  }
+  .cursor-follower {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212,240,0,0.4);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.875rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(245,243,238,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    cursor: none;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 30%, rgba(212,240,0,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 70%, rgba(212,240,0,0.04) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+  }
+
+  .hero-tag {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .hero-headline {
+    position: relative; z-index: 1;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+  }
+  .hero-headline .outline {
+    -webkit-text-stroke: 1px rgba(245,243,238,0.3);
+    color: transparent;
+  }
+  .hero-headline .accent { color: var(--accent); }
+
+  .hero-sub-row {
+    position: relative; z-index: 1;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 2rem;
+  }
+  .hero-desc {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,243,238,0.55);
+    max-width: 380px;
+  }
+
+  .hero-btns { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--black);
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    cursor: none;
+  }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--white);
+    padding: 1rem 2rem;
+    border: 1px solid rgba(245,243,238,0.2);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: none;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,243,238,0.25);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+    background: var(--mid);
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,243,238,0.4);
+    padding: 0 2.5rem;
+  }
+  .marquee-item span { color: var(--accent); margin-right: 2.5rem; }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* SECTION COMMON */
+  section { padding: 7rem 4rem; }
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+  .section-tag::before {
+    content: ''; width: 16px; height: 1px;
+    background: var(--accent); display: inline-block;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ABOUT / WHAT WE DO */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .about-left {}
+  .about-right {}
+  .about-desc {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(245,243,238,0.55);
+    margin-bottom: 2.5rem;
+  }
+  .about-stats {
+    display: flex; gap: 3rem;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: rgba(245,243,238,0.4);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .about-visual {
+    aspect-ratio: 1;
+    background: var(--mid);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-visual-inner {
+    width: 70%; height: 70%;
+    border: 1px solid rgba(212,240,0,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: spin 20s linear infinite;
+  }
+  .about-visual-center {
+    width: 55%; height: 55%;
+    background: rgba(212,240,0,0.05);
+    border: 1px solid rgba(212,240,0,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-visual-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .about-visual-orbit {
+    position: absolute; inset: 0;
+    border: 1px dashed rgba(212,240,0,0.06);
+    border-radius: 50%;
+    margin: 10%;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* SERVICES */
+  .services-section { background: var(--mid); }
+  .services-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3.5rem;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    background: var(--mid);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .service-card:hover { background: #111; }
+  .service-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .service-card:hover::after { transform: scaleX(1); }
+  .service-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: rgba(245,243,238,0.2);
+    margin-bottom: 1.5rem;
+  }
+  .service-icon {
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .service-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--white);
+  }
+  .service-desc {
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,243,238,0.45);
+  }
+  .service-arrow {
+    position: absolute; bottom: 2rem; right: 2rem;
+    font-size: 1.2rem;
+    color: rgba(245,243,238,0.15);
+    transition: color 0.2s, transform 0.2s;
+  }
+  .service-card:hover .service-arrow { color: var(--accent); transform: translate(3px,-3px); }
+
+  /* PROCESS */
+  .process-steps {
+    margin-top: 3rem;
+    counter-reset: step;
+  }
+  .process-step {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .process-step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(245,243,238,0.06);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .process-step:hover .step-num { color: rgba(212,240,0,0.2); }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+  }
+  .step-sub {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .step-desc {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,243,238,0.45);
+  }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--mid);
+    text-align: center;
+  }
+  .contact-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .contact-headline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .contact-headline .accent { color: var(--accent); }
+  .contact-desc {
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(245,243,238,0.5);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .contact-email {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid rgba(245,243,238,0.15);
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+    margin-bottom: 2rem;
+    cursor: none;
+  }
+  .contact-email:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-email .at { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-tagline {
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: rgba(245,243,238,0.3);
+  }
+  .footer-copy {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(245,243,238,0.25);
+  }
+
+  /* PRICING */
+  .pricing-section { background: var(--black); }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 3.5rem;
+  }
+  .plan-card {
+    background: var(--black);
+    padding: 2.5rem 2rem;
+    position: relative;
+    display: flex; flex-direction: column;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .plan-card:hover { background: #0f0f0f; }
+  .plan-card.featured {
+    background: var(--mid);
+    border-top: 2px solid var(--accent);
+  }
+  .plan-card.featured:hover { background: #1f1f1f; }
+  .plan-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--black);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 1.2rem;
+  }
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(245,243,238,0.5);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+  .plan-price .currency {
+    font-size: 1.2rem;
+    font-weight: 400;
+    vertical-align: super;
+    color: var(--accent);
+  }
+  .plan-delivery {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .plan-features { list-style: none; flex: 1; margin-bottom: 2rem; }
+  .plan-features li {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: rgba(245,243,238,0.6);
+    padding: 0.55rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .plan-features li::before {
+    content: '✦';
+    font-size: 0.5rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .plan-cta {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.85rem 1rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: none;
+    display: block;
+  }
+  .plan-cta-outline {
+    border: 1px solid rgba(245,243,238,0.18);
+    color: rgba(245,243,238,0.6);
+  }
+  .plan-cta-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .plan-cta-filled {
+    background: var(--accent);
+    color: var(--black);
+    border: 1px solid var(--accent);
+  }
+  .plan-cta-filled:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  @media (max-width: 900px) {
+    .pricing-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-sub-row { flex-direction: column; align-items: flex-start; }
+    .about { grid-template-columns: 1fr; gap: 3rem; }
+    .about-visual { display: none; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-step { grid-template-columns: 40px 1fr; }
+    .process-step > div:last-child { grid-column: 2; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Go<span>Web</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Start a Project</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-tag">Web Design Studio</div>
+  <h1 class="hero-headline">
+    <span class="outline">Design</span><br>
+    <span>That</span><br>
+    <span class="accent">Works.</span>
+  </h1>
+  <div class="hero-sub-row">
+    <p class="hero-desc">
+      We craft fast, beautiful websites that turn visitors into customers. Based in India. Working globally.
+    </p>
+    <div class="hero-btns">
+      <a href="#services" class="btn-primary">Our Services</a>
+      <a href="#contact" class="btn-ghost">Let's Talk</a>
+    </div>
+    <div class="hero-number">Est. 2024</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marquee">
+    <span class="marquee-item"><span>✦</span> Web Design</span>
+    <span class="marquee-item"><span>✦</span> Landing Pages</span>
+    <span class="marquee-item"><span>✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span>✦</span> Responsive Layouts</span>
+    <span class="marquee-item"><span>✦</span> Brand Identity</span>
+    <span class="marquee-item"><span>✦</span> E-Commerce Sites</span>
+    <span class="marquee-item"><span>✦</span> SEO Ready</span>
+    <span class="marquee-item"><span>✦</span> Fast Loading</span>
+    <span class="marquee-item"><span>✦</span> Web Design</span>
+    <span class="marquee-item"><span>✦</span> Landing Pages</span>
+    <span class="marquee-item"><span>✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span>✦</span> Responsive Layouts</span>
+    <span class="marquee-item"><span>✦</span> Brand Identity</span>
+    <span class="marquee-item"><span>✦</span> E-Commerce Sites</span>
+    <span class="marquee-item"><span>✦</span> SEO Ready</span>
+    <span class="marquee-item"><span>✦</span> Fast Loading</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about">
+    <div class="about-left">
+      <div class="section-tag">Who We Are</div>
+      <h2 class="section-title">Websites built for results, not just looks.</h2>
+      <p class="about-desc">
+        GoWeb is a web designing studio focused on building clean, high-performance websites for businesses that want to grow. Every pixel has a purpose. Every line of code is crafted to deliver results.
+      </p>
+      <div class="about-stats">
+        <div>
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Custom Builds</div>
+        </div>
+        <div>
+          <div class="stat-num">Fast</div>
+          <div class="stat-label">Delivery</div>
+        </div>
+        <div>
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Revisions</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="about-visual">
+        <div class="about-orbit"></div>
+        <div class="about-visual-inner">
+          <div class="about-visual-center">
+            <div class="about-visual-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="services-section">
+  <div class="services-header">
+    <div>
+      <div class="section-tag">What We Do</div>
+      <h2 class="section-title">Services</h2>
+    </div>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <span class="service-icon">⬡</span>
+      <div class="service-title">Website Design</div>
+      <p class="service-desc">Custom designed websites that reflect your brand and convert visitors. Fully responsive and pixel-perfect.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <span class="service-icon">◈</span>
+      <div class="service-title">Landing Pages</div>
+      <p class="service-desc">High-converting landing pages designed to drive action. Ideal for campaigns, product launches, and lead generation.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <span class="service-icon">◉</span>
+      <div class="service-title">UI/UX Design</div>
+      <p class="service-desc">User-first interface design that is intuitive, accessible, and visually compelling. From wireframes to final screens.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <span class="service-icon">▣</span>
+      <div class="service-title">Redesign & Revamp</div>
+      <p class="service-desc">Got an outdated site? We transform old, clunky websites into modern, fast, and beautiful experiences.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <span class="service-icon">⬔</span>
+      <div class="service-title">E-Commerce Design</div>
+      <p class="service-desc">Beautifully designed online stores that are easy to navigate and optimized for sales and conversions.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <span class="service-icon">◎</span>
+      <div class="service-title">Maintenance & Support</div>
+      <p class="service-desc">Ongoing support to keep your website fast, secure, and up to date. We're here when you need us.</p>
+      <div class="service-arrow">↗</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-title">Our Process</h2>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div>
+        <div class="step-sub">Discovery</div>
+        <div class="step-title">We Listen First</div>
+      </div>
+      <div>
+        <p class="step-desc">We start with a conversation to understand your business, goals, and audience. No assumptions — just clarity.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div>
+        <div class="step-sub">Design</div>
+        <div class="step-title">We Create the Vision</div>
+      </div>
+      <div>
+        <p class="step-desc">Custom designs built around your brand identity. You review, provide feedback, and we refine until it's perfect.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div>
+        <div class="step-sub">Development</div>
+        <div class="step-title">We Build It</div>
+      </div>
+      <div>
+        <p class="step-desc">Clean, fast, and responsive code. Mobile-first approach with SEO best practices baked in from the start.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div>
+        <div class="step-sub">Launch</div>
+        <div class="step-title">We Go Live</div>
+      </div>
+      <div>
+        <p class="step-desc">After thorough testing, your site goes live. We handle the launch and stay on hand for any support you need.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="section-tag">Plans & Pricing</div>
+  <h2 class="section-title">Choose Your Plan</h2>
+
+  <div class="pricing-grid">
+
+    <!-- BASIC -->
+    <div class="plan-card">
+      <div class="plan-name">GoWeb — Basic</div>
+      <div class="plan-price"><span class="currency">₹</span>3,000</div>
+      <div class="plan-delivery">⚡ Ready in 5 days</div>
+      <ul class="plan-features">
+        <li>Professional Website</li>
+        <li>1 Month Free Maintenance</li>
+        <li>Mobile Responsive</li>
+        <li>SEO Ready</li>
+      </ul>
+    </div>
+
+    <!-- PRO -->
+    <div class="plan-card featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">GoWeb — Pro</div>
+      <div class="plan-price"><span class="currency">₹</span>10,000</div>
+      <div class="plan-delivery">⚡ Ready in 5 days</div>
+      <ul class="plan-features">
+        <li>Professional Website</li>
+        <li>3 Months Free Maintenance</li>
+        <li>Personal Domain Name</li>
+        <li>Mobile Responsive</li>
+        <li>SEO Ready</li>
+      </ul>
+    </div>
+
+    <!-- INFINITY PRO -->
+    <div class="plan-card">
+      <div class="plan-name">GoWeb — Infinity Pro</div>
+      <div class="plan-price"><span class="currency">₹</span>15,000</div>
+      <div class="plan-delivery">⚡ Ready in 5 days</div>
+      <ul class="plan-features">
+        <li>Professional Website</li>
+        <li>12 Months Free Maintenance</li>
+        <li>Personal Domain Name</li>
+        <li>Mobile Responsive</li>
+        <li>SEO Ready</li>
+      </ul>
+    </div>
+
+    <!-- SPEEDO -->
+    <div class="plan-card">
+      <div class="plan-badge" style="background: #ff4444; color: #fff;">Fastest</div>
+      <div class="plan-name">GoWeb — Speedo</div>
+      <div class="plan-price"><span class="currency">₹</span>20,000</div>
+      <div class="plan-delivery">🚀 Ready in just 1 day</div>
+      <ul class="plan-features">
+        <li>Professional Website</li>
+        <li>3 Months Free Maintenance</li>
+        <li>Priority Build — 24 Hours</li>
+        <li>Mobile Responsive</li>
+        <li>SEO Ready</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; margin-top: 3rem;">
+    <p style="font-size:0.875rem; font-weight:300; color:rgba(245,243,238,0.4); margin-bottom:1.2rem; letter-spacing:0.04em;">
+      Not sure which plan is right for you? Just reach out — we'll help you decide.
+    </p>
+    <a href="https://mail.google.com/mail/?view=cm&to=deeprajcpj75@gmail.com&su=GoWeb%20Enquiry" target="_blank" class="btn-primary" style="display:inline-flex; align-items:center; gap:0.6rem;">
+      <span style="font-size:1rem;">✉</span> Contact on Gmail ↗
+    </a>
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="contact-wrap">
+    <div class="section-tag" style="justify-content:center;">Get In Touch</div>
+    <h2 class="contact-headline">
+      Let's <span class="accent">Build</span><br>Together.
+    </h2>
+    <p class="contact-desc">
+      Ready to take your business online? Drop us a message and we'll get back to you within 24 hours.
+    </p>
+    <div>
+      <a href="mailto:deeprajcpj75@gmail.com" class="contact-email">
+        <span>✉</span>
+        <span>deeprajcpj75<span class="at">@</span>gmail.com</span>
+      </a>
+    </div>
+    <a href="mailto:deeprajcpj75@gmail.com" class="btn-primary" style="display:inline-block; margin-top:1rem;">Start a Project ↗</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo">Go<span>Web</span></a>
+  <div class="footer-tagline">Build with Deepraj!</div>
+  <div class="footer-copy">© 2024 GoWeb. All rights reserved.</div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursor-follower');
+  let mx = 0, my = 0, fx = 0, fy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animate() {
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    fx += (mx - fx) * 0.12;
+    fy += (my - fy) * 0.12;
+    follower.style.left = fx + 'px';
+    follower.style.top = fy + 'px';
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  document.querySelectorAll('a, button, .service-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      follower.style.width = '56px';
+      follower.style.height = '56px';
+      follower.style.borderColor = 'rgba(212,240,0,0.6)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      follower.style.width = '36px';
+      follower.style.height = '36px';
+      follower.style.borderColor = 'rgba(212,240,0,0.4)';
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.style.opacity = '1';
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.service-card, .process-step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
